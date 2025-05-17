@@ -1,0 +1,50 @@
+// obj_player Step Event
+scr_player_movement();
+scr_player_interact();
+scr_player_inventory();
+scr_player_attack();
+
+// 공격 모션 완료 시 원래 스프라이트로 복귀
+if (sprite_index == spr_player_attack && image_index >= image_number - 1) {
+    if (equipped_item == 2) {
+        sprite_index = spr_player_walk_with_weapon;
+    } else {
+        sprite_index = spr_player_walk;
+    }
+}
+
+// 피로도 관리
+if (keyboard_check(vk_shift) && (keyboard_check(ord("W")) || keyboard_check(ord("A")) || keyboard_check(ord("S")) || keyboard_check(ord("D")))) {
+    fatigue = min(fatigue + 0.5, max_fatigue); // 달리기 시 피로도 증가
+    fatigue_recovery_timer = 180; // 3초 후 회복 시작
+}
+if (fatigue_recovery_timer > 0) {
+    fatigue_recovery_timer -= 1;
+} else {
+    fatigue = max(fatigue - 0.2, 0); // 피로도 회복
+}
+if (fatigue >= max_fatigue * 0.8) {
+    sprite_index = spr_player_exhausted; // 피로 상태
+} else if (equipped_item == 2 && sprite_index != spr_player_attack) {
+    sprite_index = spr_player_walk_with_weapon;
+} else if (sprite_index != spr_player_attack) {
+    sprite_index = spr_player_walk;
+}
+
+// 카메라 줌
+if (mouse_wheel_up()) zoom_level = max(zoom_min, zoom_level - 0.1);
+if (mouse_wheel_down()) zoom_level = min(zoom_max, zoom_level + 0.1);
+camera_set_view_size(camera, 1920 * zoom_level, 1080 * zoom_level);
+camera_set_view_pos(camera, x - (1920 * zoom_level) / 2, y - (1080 * zoom_level) / 2);
+
+// 울타리 넘기
+if (keyboard_check_pressed(ord("E"))) {
+    var target = instance_nearest(x, y, obj_fence);
+    if (target != noone && point_distance(x, y, target.x, target.y) <= 32) {
+        sprite_index = spr_player_climb;
+        image_index = 0;
+        image_speed = 1;
+        x = target.x;
+        y = target.y + 16; // 울타리 반대편으로 이동
+    }
+}
