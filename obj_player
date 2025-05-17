@@ -1,0 +1,52 @@
+// obj_player Create Event
+direction = 0; // 초기 방향 (오른쪽)
+hp = 100; // 플레이어 체력
+max_hp = 100;
+fatigue = 0; // 피로도
+max_fatigue = 100;
+fatigue_recovery_timer = 0;
+equipped_item = -1; // 장착 중인 아이템 (-1: 없음)
+equipped_slot = -1; // 장착 중인 슬롯 (-1: 없음)
+
+// 인벤토리 초기화 (10개 슬롯)
+inventory_slots = 10;
+for (var i = 0; i < inventory_slots; i++) {
+    inventory[i] = -1; // -1: 빈 슬롯
+}
+inventory[0] = 0; // 양배추
+inventory[1] = 1; // 케일
+inventory[2] = 2; // 당근칼
+inventory_open = false; // 인벤토리 창 열림/닫힘 상태
+inventory_alpha = 0; // 인벤토리 애니메이션 투명도
+selected_slot = -1; // 선택된 슬롯 (-1: 없음)
+show_actions = false; // 행동 선택지 표시 여부
+action_selection = 0; // 선택된 행동 (0: 장착, 1: 버리기)
+
+// 드래그 상태 관리
+dragged_slot = -1; // 드래그 중인 슬롯
+drag_offset_x = 0;
+drag_offset_y = 0;
+
+// 아이템 데이터 (ID와 스프라이트 매핑)
+global.item_data[0] = spr_item_cabbage;  // ID 0: 양배추
+global.item_data[1] = spr_item_kayle;    // ID 1: 케일
+global.item_data[2] = spr_item_carrot;   // ID 2: 당근칼
+
+// 아이템 효과 데이터
+global.item_effects[0] = 10;  // 양배추: 체력 10 회복
+global.item_effects[1] = 20;  // 케일: 체력 20 회복
+global.item_effects[2] = 0;   // 당근칼: 효과 없음 (무기)
+
+// 아이템 정보 (이름, 설명, 카테고리)
+global.item_info[0] = ["양배추", "신선한 양배추, 체력을 회복한다.", "Food"];
+global.item_info[1] = ["케일", "영양가 높은 케일, 체력을 많이 회복한다.", "Food"];
+global.item_info[2] = ["당근칼", "날카로운 당근으로 만든 칼.", "Weapon"];
+
+// 카메라 설정
+camera = camera_create_view(0, 0, 1920, 1080, 0, id, -1, -1, 960, 540);
+view_camera[0] = camera;
+view_enabled = true;
+view_visible[0] = true;
+zoom_level = 1; // 기본 줌 레벨
+zoom_min = 0.5; // 최소 줌 (2배 확대)
+zoom_max = 1.5; // 최대 줌 (0.67배 축소)
